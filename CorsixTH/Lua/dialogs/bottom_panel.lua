@@ -550,10 +550,10 @@ function UIBottomPanel:_showMessage()
   end
 end
 
--- If there is any message in the queue that is suitable to be shown
--- as in there is no currently shown message of the same type and
--- there is less than 5 currently shown messages, then return it's
--- index, otherwise return nil.
+-- Return the index of the first fax message in the queue that is suitable to be
+-- shown, and nil if there are none. A message is suitable to be shown if there
+-- are less than 5 currently shown messages, no message of the same type is
+-- already shown.
 function UIBottomPanel:_findMessageToShow()
   if #self.message_windows >= 5 then
     return nil
