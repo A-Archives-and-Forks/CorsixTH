@@ -1494,6 +1494,13 @@ function Window:makeHotkeyBoxOnPanel(panel, confirm_callback, abort_callback)
   return hotkeybox
 end
 
+-- Return the X and Y coordinates of the window as drawn on
+-- the screen after factoring in the ui_scale.
+function Window:getRealXY()
+  local s = self.apply_ui_scale and TheApp.config.ui_scale or 1
+  return self.x * s, self.y * s
+end
+
 function Window:draw(canvas, x, y)
   local s = self.apply_ui_scale and TheApp.config.ui_scale or 1
   x, y = x + self.x * s, y + self.y * s
@@ -2151,14 +2158,23 @@ function Window:afterLoad(old, new)
     self.apply_ui_scale = true
   end
 
+  -- If a window or panel is asked to close during an afterLoad cycle we
+  -- can skip entries so use backwards iteration here instead
   if self.windows then
-    for _, w in pairs(self.windows) do
-      w:afterLoad(old, new)
+    for i = #self.windows, 1, -1 do
+      local window = self.windows[i]
+      if window then
+        window:afterLoad(old, new)
+      end
     end
   end
+
   if self.panels then
-    for _, p in pairs(self.panels) do
-      p:afterLoad(old, new)
+    for i = #self.panels, 1, -1 do
+      local panel = self.panels[i]
+      if panel then
+        panel:afterLoad(old, new)
+      end
     end
   end
 end
